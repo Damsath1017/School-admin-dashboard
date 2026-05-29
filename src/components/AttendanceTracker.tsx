@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import { ClipboardCheck, Users, UserCheck, UserX, Clock, Send } from 'lucide-react';
+import { ClipboardCheck, UserCheck, UserX, Clock, Send } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
-
-interface StudentAttendance {
-  id: string;
-  name: string;
-  status: 'Present' | 'Absent' | 'Late';
-}
 
 export const AttendanceTracker: React.FC = () => {
   const { students, triggerToast, addActivity } = useDashboard();

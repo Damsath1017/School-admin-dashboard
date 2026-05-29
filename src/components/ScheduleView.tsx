@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, User, BookOpen } from 'lucide-react';
+import { Calendar, Clock, MapPin, User } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 
 export const ScheduleView: React.FC = () => {

@@ -4,7 +4,7 @@ import { useDashboard } from '../context/DashboardContext';
 import { Modal } from './Modal';
 
 export const FinanceTracker: React.FC = () => {
-  const { transactions, students, triggerToast, addActivity } = useDashboard();
+  const { transactions, triggerToast, addActivity } = useDashboard();
   const [statusFilter, setStatusFilter] = useState('All');
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 

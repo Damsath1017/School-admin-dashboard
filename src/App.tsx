@@ -6,25 +6,15 @@ import { Header } from './components/Header';
 import { Overview } from './components/Overview';
 import { StudentsList } from './components/StudentsList';
 import { TeachersList } from './components/TeachersList';
+import { ScheduleView } from './components/ScheduleView';
+import { AttendanceTracker } from './components/AttendanceTracker';
+import { FinanceTracker } from './components/FinanceTracker';
+import { Settings } from './components/Settings';
 import { 
   CheckCircle2, 
   Info, 
-  AlertTriangle,
-  Flame
+  AlertTriangle
 } from 'lucide-react';
-
-// Temporarily define placeholders for modules to be built in Days 3-5
-const PlaceholderView: React.FC<{ name: string }> = ({ name }) => (
-  <div className="p-6 h-full flex flex-col items-center justify-center text-center">
-    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4 border border-dashed border-slate-300 dark:border-slate-700">
-      <Flame className="w-8 h-8 animate-pulse text-sky-500" />
-    </div>
-    <h2 className="text-xl font-bold font-outfit text-slate-800 dark:text-white">{name} Component</h2>
-    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mt-1">
-      This module is scheduled to be built in a subsequent day of our 5-day school admin dashboard plan.
-    </p>
-  </div>
-);
 
 const App: React.FC = () => {
   const { currentTab, toast, triggerToast } = useDashboard();
@@ -62,15 +52,15 @@ const App: React.FC = () => {
       case 'Teachers':
         return <TeachersList />;
       case 'Schedule':
-        return <PlaceholderView name="Classes & Timetable (Day 5)" />;
+        return <ScheduleView />;
       case 'Attendance':
-        return <PlaceholderView name="Attendance Tracker (Day 5)" />;
+        return <AttendanceTracker />;
       case 'Fees & Payments':
-        return <PlaceholderView name="Finance & Payments (Day 5)" />;
+        return <FinanceTracker />;
       case 'Settings':
-        return <PlaceholderView name="System Settings (Day 5)" />;
+        return <Settings />;
       default:
-        return <PlaceholderView name="Overview" />;
+        return <Overview />;
     }
   };
 
