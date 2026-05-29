@@ -17,7 +17,8 @@ export const TeachersList: React.FC = () => {
     teachers, 
     addTeacher, 
     updateTeacher, 
-    deleteTeacher
+    deleteTeacher,
+    t
   } = useDashboard();
 
   // Filter States
@@ -32,8 +33,8 @@ export const TeachersList: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
-  const [department, setDepartment] = useState('Sciences');
-  const [assignedClass, setAssignedClass] = useState('10th Grade');
+  const [department, setDepartment] = useState('Commerce Dept.');
+  const [assignedClass, setAssignedClass] = useState('12-Commerce-A');
   const [status, setStatus] = useState<'Active' | 'On Leave' | 'Inactive'>('Active');
   
   // Validation State
@@ -58,8 +59,8 @@ export const TeachersList: React.FC = () => {
     setName('');
     setEmail('');
     setSubject('');
-    setDepartment('Sciences');
-    setAssignedClass('10th Grade');
+    setDepartment('Commerce Dept.');
+    setAssignedClass('12-Commerce-A');
     setStatus('Active');
     setFormError('');
     setIsModalOpen(true);
@@ -112,6 +113,14 @@ export const TeachersList: React.FC = () => {
     return matchesDept && matchesStatus;
   });
 
+  const getStatusDisplay = (val: 'Active' | 'On Leave' | 'Inactive') => {
+    switch (val) {
+      case 'Active': return t('activeStatus');
+      case 'On Leave': return t('onLeaveStatus');
+      default: return t('inactiveStatus');
+    }
+  };
+
   const getStatusBadgeColor = (val: 'Active' | 'On Leave' | 'Inactive') => {
     switch (val) {
       case 'Active': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30';
@@ -121,66 +130,66 @@ export const TeachersList: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       
       {/* Top action header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold font-outfit text-slate-800 dark:text-white tracking-tight">
-            Teachers & Staff Directory
+            {t('teachersTitle')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-            Manage academic personnel, departments, and class allocations.
+            {t('teachersSub')}
           </p>
         </div>
         <button
           onClick={handleAddClick}
-          className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl text-sm shadow-lg shadow-sky-500/10 transition-all cursor-pointer w-fit"
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-bold rounded-xl text-xs shadow-lg shadow-sky-500/10 transition-all cursor-pointer w-fit"
         >
           <Plus className="w-4 h-4" />
-          <span>Hire Teacher</span>
+          <span>{t('addTeacherBtn')}</span>
         </button>
       </div>
 
       {/* Filter Section */}
       <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center gap-4 text-xs">
-          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px]">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Filters</span>
+            <span>{t('targetAudience')}</span>
           </div>
 
           {/* Department filter */}
           <div className="flex items-center gap-1">
-            <label className="text-slate-400">Department:</label>
+            <label className="text-slate-400">{t('deptCol')}:</label>
             <select
               value={deptFilter}
               onChange={(e) => setDeptFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-700 dark:text-slate-200 focus:border-sky-500"
+              className="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-700 dark:text-slate-200 focus:border-sky-500 font-semibold"
             >
-              <option value="All">All Departments</option>
-              <option value="Sciences">Sciences</option>
-              <option value="Humanities">Humanities</option>
-              <option value="Social Studies">Social Studies</option>
+              <option value="All">{t('filterAllDepts')}</option>
+              <option value="Commerce Dept.">Commerce Dept.</option>
+              <option value="Languages Dept.">Languages Dept.</option>
+              <option value="IT Dept.">IT Dept.</option>
             </select>
           </div>
 
           {/* Status filter */}
           <div className="flex items-center gap-1">
-            <label className="text-slate-400">Status:</label>
+            <label className="text-slate-400">{t('statusCol')}:</label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-700 dark:text-slate-200 focus:border-sky-500"
+              className="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none text-slate-700 dark:text-slate-200 focus:border-sky-500 font-semibold"
             >
-              <option value="All">All Statuses</option>
-              <option value="Active">Active</option>
-              <option value="On Leave">On Leave</option>
-              <option value="Inactive">Inactive</option>
+              <option value="All">{t('selectStatus')}</option>
+              <option value="Active">{t('activeStatus')}</option>
+              <option value="On Leave">{t('onLeaveStatus')}</option>
+              <option value="Inactive">{t('inactiveStatus')}</option>
             </select>
           </div>
 
-          <div className="ml-auto text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
+          <div className="ml-auto text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
             Showing {filteredTeachers.length} of {teachers.length} staff members
           </div>
         </div>
@@ -191,16 +200,16 @@ export const TeachersList: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-100 dark:border-slate-800">
-                <th className="px-6 py-4">Faculty Member</th>
-                <th className="px-6 py-4">Subject expert</th>
-                <th className="px-6 py-4">Department</th>
-                <th className="px-6 py-4">Assigned Class</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+              <tr className="bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 uppercase font-bold text-[10px] tracking-wider border-b border-slate-100 dark:border-slate-800">
+                <th className="px-6 py-4">{t('teachers')}</th>
+                <th className="px-6 py-4">{t('subjectCol')}</th>
+                <th className="px-6 py-4">{t('deptCol')}</th>
+                <th className="px-6 py-4">{t('formAssignedClass')}</th>
+                <th className="px-6 py-4">{t('statusCol')}</th>
+                <th className="px-6 py-4 text-right">{t('actionsCol')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm font-semibold">
               {filteredTeachers.length > 0 ? (
                 filteredTeachers.map((teacher) => (
                   <tr key={teacher.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
@@ -210,7 +219,7 @@ export const TeachersList: React.FC = () => {
                           {teacher.name.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-800 dark:text-slate-200">{teacher.name}</p>
+                          <p className="font-bold text-slate-800 dark:text-slate-200">{teacher.name}</p>
                           <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{teacher.id}</p>
                         </div>
                       </div>
@@ -221,15 +230,15 @@ export const TeachersList: React.FC = () => {
                         <span>{teacher.subject}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-500 dark:text-slate-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-slate-400 font-medium">
                       {teacher.department}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-600 dark:text-slate-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-slate-650 dark:text-slate-350">
                       {teacher.assignedClass}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${getStatusBadgeColor(teacher.status)}`}>
-                        {teacher.status}
+                        {getStatusDisplay(teacher.status)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -255,8 +264,7 @@ export const TeachersList: React.FC = () => {
               ) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <p className="text-sm">No teacher records found</p>
-                    <p className="text-xs text-slate-500 mt-1">Try modifying your filter options.</p>
+                    <p className="text-sm font-semibold">{t('noTeachersFound')}</p>
                   </td>
                 </tr>
               )}
@@ -269,12 +277,12 @@ export const TeachersList: React.FC = () => {
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        title={editingTeacher ? `Edit Teacher Details: ${editingTeacher.name}` : 'Hire New Faculty Member'}
+        title={editingTeacher ? `${t('editTeacher')}: ${editingTeacher.name}` : t('addTeacherBtn')}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           
           {formError && (
-            <div className="p-3 text-xs text-rose-600 bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900/30">
+            <div className="p-3 text-xs text-rose-600 bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900/30 font-semibold">
               {formError}
             </div>
           )}
@@ -283,7 +291,7 @@ export const TeachersList: React.FC = () => {
             {/* Name */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Full Name *
+                {t('formName')} *
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -294,7 +302,7 @@ export const TeachersList: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Dr. John Doe"
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
                   required
                 />
               </div>
@@ -303,7 +311,7 @@ export const TeachersList: React.FC = () => {
             {/* Email */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Email Address *
+                {t('formEmail')} *
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -314,7 +322,7 @@ export const TeachersList: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. john.doe@school.com"
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
                   required
                 />
               </div>
@@ -323,7 +331,7 @@ export const TeachersList: React.FC = () => {
             {/* Subject Expert */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Subject Expert *
+                {t('subjectCol')} *
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -333,8 +341,8 @@ export const TeachersList: React.FC = () => {
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="e.g. Chemistry, Algebra"
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  placeholder="e.g. Economics, Accounting"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
                   required
                 />
               </div>
@@ -343,45 +351,45 @@ export const TeachersList: React.FC = () => {
             {/* Department select */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Department *
+                {t('deptCol')} *
               </label>
               <select
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
               >
-                <option value="Sciences">Sciences</option>
-                <option value="Humanities">Humanities</option>
-                <option value="Social Studies">Social Studies</option>
+                <option value="Commerce Dept.">Commerce Dept.</option>
+                <option value="Languages Dept.">Languages Dept.</option>
+                <option value="IT Dept.">IT Dept.</option>
               </select>
             </div>
 
             {/* Assigned Class select */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Class Allocation *
+                {t('formAssignedClass')} *
               </label>
               <select
                 value={assignedClass}
                 onChange={(e) => setAssignedClass(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
               >
-                <option value="9th Grade">9th Grade</option>
-                <option value="10th Grade">10th Grade</option>
-                <option value="11th Grade">11th Grade</option>
-                <option value="12th Grade">12th Grade</option>
+                <option value="12-Commerce-A">12-Commerce-A</option>
+                <option value="12-Commerce-B">12-Commerce-B</option>
+                <option value="13-Commerce-A">13-Commerce-A</option>
+                <option value="13-Commerce-B">13-Commerce-B</option>
               </select>
             </div>
 
             {/* Status select */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Contract Status *
+                {t('formStatus')} *
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
               >
                 <option value="Active">Active</option>
                 <option value="On Leave">On Leave</option>
@@ -394,15 +402,15 @@ export const TeachersList: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2.5 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="px-4 py-2.5 border border-slate-200 dark:border-slate-800 text-slate-650 dark:text-slate-400 font-semibold rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
-              Cancel
+              {t('cancelBtn')}
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl text-xs shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 transition-all cursor-pointer"
+              className="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 transition-all cursor-pointer"
             >
-              {editingTeacher ? 'Save Changes' : 'Hire Teacher'}
+              {editingTeacher ? t('submitBtn') : t('addTeacherBtn')}
             </button>
           </div>
 

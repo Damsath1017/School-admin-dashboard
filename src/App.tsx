@@ -10,6 +10,8 @@ import { ScheduleView } from './components/ScheduleView';
 import { AttendanceTracker } from './components/AttendanceTracker';
 import { FinanceTracker } from './components/FinanceTracker';
 import { Settings } from './components/Settings';
+import { ProfileView } from './components/ProfileView';
+import { KnowledgeBase } from './components/KnowledgeBase';
 import { 
   CheckCircle2, 
   Info, 
@@ -17,7 +19,7 @@ import {
 } from 'lucide-react';
 
 const App: React.FC = () => {
-  const { currentTab, toast, triggerToast } = useDashboard();
+  const { currentTab, setCurrentTab, toast, triggerToast } = useDashboard();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return sessionStorage.getItem('school_admin_auth') === 'true';
   });
@@ -35,11 +37,13 @@ const App: React.FC = () => {
 
   // Callback mockups for quick add actions
   const triggerQuickAddStudent = () => {
-    triggerToast('Add Student form will be available in Day 4!', 'info');
+    setCurrentTab('Students');
+    triggerToast('Opening Students tab. Click Register New Student to add.', 'info');
   };
 
   const triggerQuickAddTeacher = () => {
-    triggerToast('Add Teacher form will be available in Day 4!', 'info');
+    setCurrentTab('Teachers');
+    triggerToast('Opening Teachers tab. Click Hire New Teacher to add.', 'info');
   };
 
   // Render view depending on active navigation tab
@@ -59,6 +63,10 @@ const App: React.FC = () => {
         return <FinanceTracker />;
       case 'Settings':
         return <Settings />;
+      case 'Profile':
+        return <ProfileView />;
+      case 'KnowledgeBase':
+        return <KnowledgeBase />;
       default:
         return <Overview />;
     }

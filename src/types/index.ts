@@ -63,4 +63,5 @@ export interface SchoolSettings {
   lowAttendanceAlert: number; // threshold e.g. 85
   systemTheme: 'light' | 'dark' | 'system';
   brandingColor: string; // hex code
+  systemLanguage: 'en' | 'si';
 }

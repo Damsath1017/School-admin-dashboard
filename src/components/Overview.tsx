@@ -42,7 +42,7 @@ ChartJS.register(
 );
 
 export const Overview: React.FC = () => {
-  const { students, teachers, transactions, activities, theme, triggerToast } = useDashboard();
+  const { students, teachers, transactions, activities, theme, triggerToast, t } = useDashboard();
   
   // Announcement states
   const [announcementText, setAnnouncementText] = useState('');
@@ -61,16 +61,16 @@ export const Overview: React.FC = () => {
     .filter(t => t.status === 'Paid')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  // Growth percentages (simulated based on static values)
+  // Growth percentages
   const studentGrowth = 8.4;
   const teacherGrowth = 2.1;
   const attendanceGrowth = -0.5;
   const revenueGrowth = 12.8;
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-LK', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
       maximumFractionDigits: 0
     }).format(amount);
   };
@@ -92,38 +92,38 @@ export const Overview: React.FC = () => {
 
   const statCards = [
     {
-      title: 'Total Students',
+      title: t('totalStudents'),
       value: totalStudents,
       change: `+${studentGrowth}%`,
       isPositive: true,
-      timeframe: 'vs last term',
+      timeframe: t('vsLastTerm'),
       icon: Users,
       color: 'sky'
     },
     {
-      title: 'Total Teachers',
+      title: t('totalTeachers'),
       value: totalTeachers,
       change: `+${teacherGrowth}%`,
       isPositive: true,
-      timeframe: 'vs last term',
+      timeframe: t('vsLastTerm'),
       icon: GraduationCap,
       color: 'indigo'
     },
     {
-      title: 'Avg. Attendance',
+      title: t('avgAttendance'),
       value: `${avgAttendance}%`,
       change: `${attendanceGrowth}%`,
       isPositive: false,
-      timeframe: 'vs last week',
+      timeframe: t('vsLastWeek'),
       icon: ClipboardCheck,
       color: 'emerald'
     },
     {
-      title: 'Total Revenue',
+      title: t('totalRevenue'),
       value: formatCurrency(totalRevenue),
       change: `+${revenueGrowth}%`,
       isPositive: true,
-      timeframe: 'this month',
+      timeframe: t('thisMonth'),
       icon: DollarSign,
       color: 'amber'
     }
@@ -283,15 +283,15 @@ export const Overview: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold font-outfit text-slate-800 dark:text-white tracking-tight">
-            Dashboard Overview
+            {t('dashboardOverview')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-            Real-time analytics and management operations summary.
+            {t('dashboardSub')}
           </p>
         </div>
         <div className="text-xs text-slate-400 dark:text-slate-500 font-medium flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-2 rounded-xl w-fit">
           <ArrowUpRight className="w-3.5 h-3.5 text-sky-500" />
-          <span>Live calculations from local database</span>
+          <span>{t('liveDb')}</span>
         </div>
       </div>
 
@@ -321,13 +321,13 @@ export const Overview: React.FC = () => {
               </div>
 
               <div className="mt-4">
-                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   {card.title}
                 </p>
                 <h3 className="text-2xl font-bold font-outfit text-slate-800 dark:text-white mt-1">
                   {card.value}
                 </h3>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
                   {card.timeframe}
                 </p>
               </div>
@@ -342,8 +342,8 @@ export const Overview: React.FC = () => {
         {/* Student Performance Bar Chart */}
         <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
           <div className="mb-4">
-            <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">GPA Distribution</h3>
-            <p className="text-xs text-slate-400 mt-0.5">Academic Performance of Active Students</p>
+            <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">{t('gpaDist')}</h3>
+            <p className="text-xs text-slate-400 mt-0.5">{t('gpaSub')}</p>
           </div>
           <div className="h-64 relative">
             <Bar data={barChartData} options={chartOptions} />
@@ -353,8 +353,8 @@ export const Overview: React.FC = () => {
         {/* Weekly Attendance Line Chart */}
         <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
           <div className="mb-4">
-            <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">Weekly Attendance Trend</h3>
-            <p className="text-xs text-slate-400 mt-0.5">Percentage of Present Students</p>
+            <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">{t('weeklyAttendance')}</h3>
+            <p className="text-xs text-slate-400 mt-0.5">{t('attendanceSub')}</p>
           </div>
           <div className="h-64 relative">
             <Line data={lineChartData} options={lineChartOptions} />
@@ -363,15 +363,15 @@ export const Overview: React.FC = () => {
 
       </div>
 
-      {/* Widgets Section (Activity logs & announcements) */}
+      {/* Widgets Section */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         
-        {/* Activity Logs - Takes 3 columns on wide grids */}
+        {/* Activity Logs */}
         <div className="lg:col-span-3 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">Recent Activities</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Logs of administrative operations</p>
+              <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">{t('recentActivities')}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">{t('activitiesSub')}</p>
             </div>
             <Clock className="w-4 h-4 text-slate-400" />
           </div>
@@ -396,52 +396,51 @@ export const Overview: React.FC = () => {
           </div>
         </div>
 
-        {/* Announcement Composer - Takes 2 columns on wide grids */}
+        {/* Announcement Composer */}
         <div className="lg:col-span-2 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
           <div className="mb-6 flex items-center gap-2">
             <Megaphone className="w-5 h-5 text-sky-500" />
             <div>
-              <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">Publish Announcement</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Broadcast school alerts instantly</p>
+              <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">{t('publishAnnouncement')}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">{t('announcementSub')}</p>
             </div>
           </div>
 
           <form onSubmit={handlePostAnnouncement} className="space-y-4 flex-1 flex flex-col">
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Target Audience
+                {t('targetAudience')}
               </label>
               <select
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
               >
-                <option value="All">All Audiences</option>
-                <option value="Students">Students Directory</option>
-                <option value="Teachers">Teachers Panel</option>
-                <option value="Staff">Administrative Staff</option>
+                <option value="All">{t('allAudiences')}</option>
+                <option value="Students">{t('students')}</option>
+                <option value="Teachers">{t('teachers')}</option>
               </select>
             </div>
 
             <div className="flex-1 flex flex-col min-h-[120px]">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                Announcement Message
+                {t('publishAnnouncement')}
               </label>
               <textarea
                 value={announcementText}
                 onChange={(e) => setAnnouncementText(e.target.value)}
-                placeholder="Type your announcement broadcast..."
-                className="w-full flex-1 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 resize-none transition-all placeholder:text-slate-400"
+                placeholder={t('announcementPlaceholder')}
+                className="w-full flex-1 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 resize-none transition-all placeholder:text-slate-400 font-semibold"
               ></textarea>
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 disabled:opacity-75 disabled:scale-100 transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-auto"
+              className="w-full py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-bold rounded-xl shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 disabled:opacity-75 disabled:scale-100 transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-auto"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? 'Publishing...' : 'Broadcast Announcement'}</span>
+              <span>{isSubmitting ? t('publishing') : t('broadcastBtn')}</span>
             </button>
           </form>
         </div>

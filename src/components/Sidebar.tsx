@@ -19,17 +19,17 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
-  const { currentTab, setCurrentTab, settings } = useDashboard();
+  const { currentTab, setCurrentTab, settings, t } = useDashboard();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { name: 'Overview', icon: LayoutDashboard },
-    { name: 'Students', icon: Users },
-    { name: 'Teachers', icon: GraduationCap },
-    { name: 'Schedule', icon: Calendar },
-    { name: 'Attendance', icon: ClipboardCheck },
-    { name: 'Fees & Payments', icon: DollarSign },
-    { name: 'Settings', icon: Settings },
+    { name: 'Overview', labelKey: 'overview' as const, icon: LayoutDashboard },
+    { name: 'Students', labelKey: 'students' as const, icon: Users },
+    { name: 'Teachers', labelKey: 'teachers' as const, icon: GraduationCap },
+    { name: 'Schedule', labelKey: 'schedule' as const, icon: Calendar },
+    { name: 'Attendance', labelKey: 'attendance' as const, icon: ClipboardCheck },
+    { name: 'Fees & Payments', labelKey: 'fees' as const, icon: DollarSign },
+    { name: 'Settings', labelKey: 'settings' as const, icon: Settings },
   ];
 
   return (
@@ -81,13 +81,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
               }`} />
               
               {!isCollapsed && (
-                <span className="font-outfit text-[14px]">{item.name}</span>
+                <span className="font-outfit text-[14px]">{t(item.labelKey)}</span>
               )}
 
               {/* Hover Tooltip when Collapsed */}
               {isCollapsed && (
                 <div className="absolute left-full ml-2 px-2 py-1 bg-slate-950 text-white text-xs rounded opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50 shadow-md">
-                  {item.name}
+                  {t(item.labelKey)}
                 </div>
               )}
             </button>
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 font-medium transition-colors group cursor-pointer"
         >
           <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
-          {!isCollapsed && <span className="font-outfit text-[14px]">Log Out</span>}
+          {!isCollapsed && <span className="font-outfit text-[14px]">{t('logout')}</span>}
         </button>
       </div>
     </aside>

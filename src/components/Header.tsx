@@ -25,7 +25,9 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
     searchQuery, 
     setSearchQuery, 
     currentTab, 
-    students
+    setCurrentTab,
+    students,
+    t
   } = useDashboard();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -67,22 +69,24 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
       
       {/* Search Input Bar (only relevant for Student/Teacher lists) */}
       <div className="flex-1 max-w-md hidden md:block">
-        <div className="relative group">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 group-focus-within:text-sky-500 transition-colors">
-            <Search className="w-4 h-4" />
-          </span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={`Search across ${currentTab === 'Teachers' ? 'teachers' : 'students'}...`}
-            className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800/80 border border-transparent dark:border-slate-800 rounded-xl outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-200 transition-all text-sm"
-          />
-        </div>
+        {(currentTab === 'Students' || currentTab === 'Teachers') && (
+          <div className="relative group animate-fade-in">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 group-focus-within:text-sky-500 transition-colors">
+              <Search className="w-4 h-4" />
+            </span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={currentTab === 'Teachers' ? t('searchPlaceholderTeachers') : t('searchPlaceholderStudents')}
+              className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800/80 border border-transparent dark:border-slate-800 rounded-xl outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-200 transition-all text-sm font-semibold"
+            />
+          </div>
+        )}
       </div>
 
       <div className="md:hidden font-outfit font-bold text-lg text-slate-800 dark:text-white">
-        {currentTab}
+        {currentTab === 'Profile' ? t('myProfile') : currentTab === 'KnowledgeBase' ? t('knowledgeBase') : currentTab}
       </div>
 
       {/* Header Actions */}
@@ -92,17 +96,17 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
         <div className="relative">
           <button
             onClick={() => setShowQuickAddMenu(!showQuickAddMenu)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-medium rounded-xl text-xs shadow-md shadow-sky-500/10 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl text-xs shadow-md shadow-sky-500/10 transition-all cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Quick Add</span>
+            <span>{t('quickAdd')}</span>
             <ChevronDown className="w-3 h-3" />
           </button>
 
           {showQuickAddMenu && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowQuickAddMenu(false)}></div>
-              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl py-1 z-20 animate-fade-in text-sm">
+              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl py-1 z-20 animate-fade-in text-sm font-semibold">
                 <button
                   onClick={() => {
                     setShowQuickAddMenu(false);
@@ -110,7 +114,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
                   }}
                   className="w-full text-left px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
-                  Register Student
+                  {t('regStudent')}
                 </button>
                 <button
                   onClick={() => {
@@ -119,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
                   }}
                   className="w-full text-left px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border-t border-slate-100 dark:border-slate-700"
                 >
-                  Hire Teacher
+                  {t('hireTeacher')}
                 </button>
               </div>
             </>
@@ -154,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
               <div className="fixed inset-0 z-10" onClick={() => setShowNotifications(false)}></div>
               <div className="absolute right-0 mt-2 w-80 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl z-20 overflow-hidden animate-fade-in">
                 <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                  <h3 className="font-outfit font-bold text-sm text-slate-800 dark:text-white">System Notifications</h3>
+                  <h3 className="font-outfit font-bold text-sm text-slate-800 dark:text-white">{t('notificationsTitle')}</h3>
                   <span className="text-[10px] text-slate-400 font-medium">Auto Updates</span>
                 </div>
                 
@@ -167,7 +171,14 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
                           <div>
                             <p className="font-semibold text-xs text-slate-800 dark:text-slate-100">{notif.title}</p>
                             <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">{notif.text}</p>
-                            <span className="text-[10px] text-sky-500 font-semibold cursor-pointer hover:underline mt-1.5 block">
+                            <span 
+                              onClick={() => {
+                                setShowNotifications(false);
+                                if (notif.id.startsWith('att')) setCurrentTab('Students');
+                                else setCurrentTab('Fees & Payments');
+                              }}
+                              className="text-[10px] text-sky-500 font-semibold cursor-pointer hover:underline mt-1.5 block"
+                            >
                               {notif.time} &rarr;
                             </span>
                           </div>
@@ -200,7 +211,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
             </div>
             <div className="hidden sm:block">
               <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 leading-tight">Admin User</p>
-              <p className="text-[10px] text-slate-400 font-medium">Principal Console</p>
+              <p className="text-[10px] text-slate-400 font-medium">{t('profileConsole')}</p>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
           </button>
@@ -208,24 +219,30 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
           {showProfileMenu && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowProfileMenu(false)}></div>
-              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl py-1.5 z-20 text-sm">
+              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl py-1.5 z-20 text-sm font-semibold">
                 <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-700 sm:hidden">
                   <p className="font-semibold text-xs text-slate-800 dark:text-slate-100">Admin User</p>
-                  <p className="text-[10px] text-slate-400 font-medium">Principal Console</p>
+                  <p className="text-[10px] text-slate-400 font-medium">{t('profileConsole')}</p>
                 </div>
                 <button
-                  onClick={() => setShowProfileMenu(false)}
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    setCurrentTab('Profile');
+                  }}
                   className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
                 >
                   <User className="w-4 h-4 text-slate-400" />
-                  <span>My Profile</span>
+                  <span>{t('myProfile')}</span>
                 </button>
                 <button
-                  onClick={() => setShowProfileMenu(false)}
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    setCurrentTab('KnowledgeBase');
+                  }}
                   className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
                 >
                   <HelpCircle className="w-4 h-4 text-slate-400" />
-                  <span>Knowledge Base</span>
+                  <span>{t('knowledgeBase')}</span>
                 </button>
                 <button
                   onClick={() => {
@@ -235,7 +252,7 @@ export const Header: React.FC<HeaderProps> = ({ onLogout, onQuickAddStudent, onQ
                   className="w-full text-left px-4 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors flex items-center gap-2 border-t border-slate-100 dark:border-slate-700"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Log Out</span>
+                  <span>{t('logout')}</span>
                 </button>
               </div>
             </>

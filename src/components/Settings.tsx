@@ -3,7 +3,7 @@ import { Settings as SettingsIcon, Save, Database, Trash2, Download, AlertTriang
 import { useDashboard } from '../context/DashboardContext';
 
 export const Settings: React.FC = () => {
-  const { settings, updateSettings, resetDatabase, triggerToast, students, teachers, transactions, schedules } = useDashboard();
+  const { settings, updateSettings, resetDatabase, triggerToast, students, teachers, transactions, schedules, t } = useDashboard();
 
   // Settings states
   const [schoolName, setSchoolName] = useState(settings.schoolName);
@@ -13,6 +13,7 @@ export const Settings: React.FC = () => {
   const [address, setAddress] = useState(settings.address);
   const [enableNotifications, setEnableNotifications] = useState(settings.enableNotifications);
   const [lowAttendanceAlert, setLowAttendanceAlert] = useState(settings.lowAttendanceAlert.toString());
+  const [systemLanguage, setSystemLanguage] = useState<'en' | 'si'>(settings.systemLanguage || 'en');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveSettings = (e: React.FormEvent) => {
@@ -36,7 +37,8 @@ export const Settings: React.FC = () => {
         enableNotifications,
         lowAttendanceAlert: attendanceNum,
         systemTheme: settings.systemTheme,
-        brandingColor: settings.brandingColor
+        brandingColor: settings.brandingColor,
+        systemLanguage
       });
       setIsSaving(false);
     }, 800);
@@ -73,15 +75,15 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl animate-fade-in">
       
       {/* Title & Introduction Section */}
       <div>
         <h1 className="text-3xl font-extrabold font-outfit text-slate-800 dark:text-white tracking-tight">
-          System Settings
+          {t('systemSettings')}
         </h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          Customize school information, notification thresholds, and manage data backups.
+          {t('settingsSub')}
         </p>
       </div>
 
@@ -91,30 +93,47 @@ export const Settings: React.FC = () => {
         <div className="md:col-span-2 p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
           <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white mb-6 flex items-center gap-2">
             <SettingsIcon className="w-5 h-5 text-sky-500" />
-            <span>School Parameters</span>
+            <span>{t('schoolParams')}</span>
           </h3>
 
           <form onSubmit={handleSaveSettings} className="space-y-4">
             
-            {/* School Name */}
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                School Name
-              </label>
-              <input
-                type="text"
-                value={schoolName}
-                onChange={(e) => setSchoolName(e.target.value)}
-                className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
-                required
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* School Name */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                  {t('schoolName')}
+                </label>
+                <input
+                  type="text"
+                  value={schoolName}
+                  onChange={(e) => setSchoolName(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
+                  required
+                />
+              </div>
+
+              {/* Language Selection */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                  {t('languageSelect')}
+                </label>
+                <select
+                  value={systemLanguage}
+                  onChange={(e) => setSystemLanguage(e.target.value as 'en' | 'si')}
+                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
+                >
+                  <option value="en">English</option>
+                  <option value="si">සිංහල (Sinhala)</option>
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Academic Year */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                  Academic Term / Year
+                  {t('academicYear')}
                 </label>
                 <input
                   type="text"
@@ -128,7 +147,7 @@ export const Settings: React.FC = () => {
               {/* Attendance Threshold */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                  Low Attendance Limit (%)
+                  {t('lowAttendanceLimit')}
                 </label>
                 <input
                   type="number"
@@ -136,7 +155,7 @@ export const Settings: React.FC = () => {
                   max="100"
                   value={lowAttendanceAlert}
                   onChange={(e) => setLowAttendanceAlert(e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
                   required
                 />
               </div>
@@ -146,13 +165,13 @@ export const Settings: React.FC = () => {
               {/* Email */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                  Contact Email
+                  {t('contactEmail')}
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
                   required
                 />
               </div>
@@ -160,13 +179,13 @@ export const Settings: React.FC = () => {
               {/* Phone */}
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                  Contact Phone
+                  {t('contactPhone')}
                 </label>
                 <input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all font-semibold"
                   required
                 />
               </div>
@@ -175,7 +194,7 @@ export const Settings: React.FC = () => {
             {/* Address */}
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-                School Address
+                {t('schoolAddress')}
               </label>
               <textarea
                 value={address}
@@ -196,7 +215,7 @@ export const Settings: React.FC = () => {
                 className="w-4.5 h-4.5 text-sky-500 bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg outline-none focus:ring-sky-500"
               />
               <label htmlFor="notify" className="text-xs text-slate-600 dark:text-slate-300 font-semibold cursor-pointer">
-                Enable low attendance and payment alerts notifications
+                {t('enableNotificationsCheckbox')}
               </label>
             </div>
 
@@ -207,7 +226,7 @@ export const Settings: React.FC = () => {
                 className="flex items-center gap-1.5 px-4.5 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl text-xs shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 disabled:opacity-75 disabled:scale-100 transition-all cursor-pointer"
               >
                 <Save className="w-3.5 h-3.5" />
-                <span>{isSaving ? 'Saving...' : 'Save Settings'}</span>
+                <span>{isSaving ? t('saving') : t('saveSettingsBtn')}</span>
               </button>
             </div>
 
@@ -221,10 +240,10 @@ export const Settings: React.FC = () => {
           <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
             <h3 className="text-sm font-bold font-outfit text-slate-800 dark:text-white mb-3 flex items-center gap-2">
               <Database className="w-4 h-4 text-emerald-500" />
-              <span>Database Operations</span>
+              <span>{t('dbOps')}</span>
             </h3>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mb-5">
-              Export all local records (students, staff, timetables, and settings) as a backup JSON file to your device.
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mb-5 font-semibold">
+              {t('dbOpsSub')}
             </p>
             
             <button
@@ -232,7 +251,7 @@ export const Settings: React.FC = () => {
               className="w-full flex items-center justify-center gap-1.5 py-2.5 border border-emerald-500 hover:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 font-bold rounded-xl text-xs transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              <span>Download Backup</span>
+              <span>{t('downloadBackupBtn')}</span>
             </button>
           </div>
 
@@ -240,10 +259,10 @@ export const Settings: React.FC = () => {
           <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm border-rose-200/50 dark:border-rose-950/20">
             <h3 className="text-sm font-bold font-outfit text-slate-800 dark:text-white mb-3 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-rose-500" />
-              <span className="text-rose-600 dark:text-rose-400">Danger Zone</span>
+              <span className="text-rose-600 dark:text-rose-400">{t('dangerZone')}</span>
             </h3>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mb-5">
-              Clear all customized settings and local records, restoring the database to default demo values.
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mb-5 font-semibold">
+              {t('dangerZoneSub')}
             </p>
             
             <button
@@ -255,7 +274,7 @@ export const Settings: React.FC = () => {
               className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/25 dark:hover:bg-rose-950/50 dark:text-rose-400 font-bold rounded-xl text-xs transition-all cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
-              <span>Factory Reset Database</span>
+              <span>{t('resetBtn')}</span>
             </button>
           </div>
 
