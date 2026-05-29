@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 import { Modal } from './Modal';
-import { Student } from '../types';
+import type { Student } from '../types';
 
 export const StudentsList: React.FC = () => {
   const { 

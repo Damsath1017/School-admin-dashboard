@@ -4,6 +4,8 @@ import { Login } from './components/Login';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Overview } from './components/Overview';
+import { StudentsList } from './components/StudentsList';
+import { TeachersList } from './components/TeachersList';
 import { 
   CheckCircle2, 
   Info, 
@@ -56,9 +58,9 @@ const App: React.FC = () => {
       case 'Overview':
         return <Overview />;
       case 'Students':
-        return <PlaceholderView name="Students Registry (Day 4)" />;
+        return <StudentsList />;
       case 'Teachers':
-        return <PlaceholderView name="Teachers Directory (Day 4)" />;
+        return <TeachersList />;
       case 'Schedule':
         return <PlaceholderView name="Classes & Timetable (Day 5)" />;
       case 'Attendance':
