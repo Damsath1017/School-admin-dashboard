@@ -9,8 +9,7 @@ import {
   Settings, 
   ChevronLeft, 
   ChevronRight, 
-  LogOut,
-  GraduationCap as AcademyIcon
+  LogOut
 } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 
@@ -41,11 +40,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
       {/* Sidebar Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="min-w-[40px] h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-md shadow-sky-500/20">
-            <AcademyIcon className="w-5 h-5" />
-          </div>
+          <img 
+            src="/school_logo.png" 
+            alt="School Logo" 
+            className="w-10 h-10 object-cover rounded-xl shadow-md shrink-0 border border-slate-200/50 dark:border-slate-800" 
+          />
           {!isCollapsed && (
-            <span className="font-outfit font-bold text-lg text-slate-800 dark:text-white truncate">
+            <span className="font-outfit font-bold text-sm text-slate-800 dark:text-white truncate">
               {settings.schoolName}
             </span>
           )}

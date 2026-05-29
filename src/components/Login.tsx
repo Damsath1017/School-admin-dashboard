@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Lock, User, Sparkles, Sun, Moon, Globe } from 'lucide-react';
+import { Lock, User, Sparkles, Sun, Moon, Globe } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 
 interface LoginProps {
@@ -77,9 +77,11 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       <div className="w-full max-w-md p-8 rounded-2xl glass shadow-2xl relative border border-white/20 dark:border-slate-800/50">
         {/* Brand/Header */}
         <div className="flex flex-col items-center mb-8 text-center">
-          <div className="w-16 h-16 bg-sky-500 dark:bg-sky-600 rounded-2xl flex items-center justify-center shadow-lg shadow-sky-500/30 text-white mb-4 animate-bounce">
-            <ShieldCheck className="w-9 h-9" />
-          </div>
+          <img 
+            src="/school_logo.png" 
+            alt="School Logo" 
+            className="w-20 h-20 object-cover rounded-2xl shadow-lg mb-4 animate-pulse border border-slate-200/50 dark:border-slate-800" 
+          />
           <h1 className="text-3xl font-extrabold font-outfit bg-gradient-to-r from-sky-600 to-indigo-600 dark:from-sky-400 dark:to-indigo-400 bg-clip-text text-transparent">
             {t('loginTitle')}
           </h1>

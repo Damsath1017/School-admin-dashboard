@@ -73,15 +73,15 @@ const initialTransactions: FeeTransaction[] = [
 ];
 
 const defaultSettings: SchoolSettings = {
-  schoolName: 'Grand Oak A/L Commerce Section',
+  schoolName: "Prince of Wales' College",
   academicYear: '2025 - 2026',
-  email: 'commerce@grandoakacademy.edu',
-  phone: '+94 11 987 6543',
-  address: '100 Academic Way, Colombo, Sri Lanka',
+  email: 'commerce@princeofwales.edu.lk',
+  phone: '+94 11 264 5628',
+  address: "Prince of Wales' College, Galle Road, Moratuwa, Sri Lanka",
   enableNotifications: true,
   lowAttendanceAlert: 85,
   systemTheme: 'light',
-  brandingColor: '#0ea5e9',
+  brandingColor: '#6b21a8', // Purple
   systemLanguage: 'en',
 };
 
