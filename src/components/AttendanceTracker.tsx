@@ -80,8 +80,12 @@ export const AttendanceTracker: React.FC = () => {
           >
             <option value="12-Commerce-A">12-Commerce-A</option>
             <option value="12-Commerce-B">12-Commerce-B</option>
+            <option value="12-Commerce-C">12-Commerce-C</option>
+            <option value="12-Commerce-D">12-Commerce-D</option>
             <option value="13-Commerce-A">13-Commerce-A</option>
             <option value="13-Commerce-B">13-Commerce-B</option>
+            <option value="13-Commerce-C">13-Commerce-C</option>
+            <option value="13-Commerce-D">13-Commerce-D</option>
           </select>
         </div>
       </div>
