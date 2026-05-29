@@ -8,20 +8,26 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 
 // Register ChartJS elements
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 export const Overview: React.FC = () => {
@@ -149,6 +155,25 @@ export const Overview: React.FC = () => {
     ]
   };
 
+  const lineChartData = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    datasets: [
+      {
+        label: 'Attendance Rate (%)',
+        data: [94.2, 95.8, 93.1, 95.0, avgAttendance],
+        fill: true,
+        backgroundColor: theme === 'dark' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.08)',
+        borderColor: '#6366f1',
+        borderWidth: 2.5,
+        pointBackgroundColor: '#6366f1',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
+        tension: 0.35,
+      }
+    ]
+  };
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -191,6 +216,22 @@ export const Overview: React.FC = () => {
             size: 11
           },
           stepSize: 1
+        }
+      }
+    }
+  };
+
+  const lineChartOptions = {
+    ...chartOptions,
+    scales: {
+      ...chartOptions.scales,
+      y: {
+        ...chartOptions.scales.y,
+        min: 80,
+        max: 100,
+        ticks: {
+          ...chartOptions.scales.y.ticks,
+          stepSize: 5
         }
       }
     }
@@ -269,9 +310,15 @@ export const Overview: React.FC = () => {
           </div>
         </div>
 
-        {/* Weekly Attendance Line Chart (Placeholder for Step 3) */}
-        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex items-center justify-center min-h-[300px]">
-          <p className="text-sm text-slate-400">Loading Weekly attendance reports...</p>
+        {/* Weekly Attendance Line Chart */}
+        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
+          <div className="mb-4">
+            <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">Weekly Attendance Trend</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Percentage of Present Students</p>
+          </div>
+          <div className="h-64 relative">
+            <Line data={lineChartData} options={lineChartOptions} />
+          </div>
         </div>
 
       </div>
