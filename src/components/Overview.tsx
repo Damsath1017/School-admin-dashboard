@@ -9,8 +9,7 @@ import {
   ArrowUpRight,
   Megaphone,
   Send,
-  Clock,
-  AlertCircle
+  Clock
 } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 

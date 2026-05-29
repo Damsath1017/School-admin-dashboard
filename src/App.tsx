@@ -3,6 +3,7 @@ import { useDashboard } from './context/DashboardContext';
 import { Login } from './components/Login';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { Overview } from './components/Overview';
 import { 
   CheckCircle2, 
   Info, 
@@ -53,7 +54,7 @@ const App: React.FC = () => {
   const renderActiveView = () => {
     switch (currentTab) {
       case 'Overview':
-        return <PlaceholderView name="Overview & Analytics (Day 3)" />;
+        return <Overview />;
       case 'Students':
         return <PlaceholderView name="Students Registry (Day 4)" />;
       case 'Teachers':
