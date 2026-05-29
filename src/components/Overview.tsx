@@ -2,8 +2,30 @@ import React from 'react';
 import { Users, GraduationCap, ClipboardCheck, DollarSign, TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 
+// Chart.js imports
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+// Register ChartJS elements
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 export const Overview: React.FC = () => {
-  const { students, teachers, transactions } = useDashboard();
+  const { students, teachers, transactions, theme } = useDashboard();
 
   // Dynamic Metrics calculations
   const totalStudents = students.length;
@@ -103,6 +125,77 @@ export const Overview: React.FC = () => {
     }
   };
 
+  // GPA Distribution Calculation
+  const gpaBrackets = {
+    'A (3.5 - 4.0)': students.filter(s => s.gpa >= 3.5).length,
+    'B (3.0 - 3.49)': students.filter(s => s.gpa >= 3.0 && s.gpa < 3.5).length,
+    'C (2.5 - 2.99)': students.filter(s => s.gpa >= 2.5 && s.gpa < 3.0).length,
+    'D/F (< 2.5)': students.filter(s => s.gpa < 2.5).length,
+  };
+
+  // ChartJS Data Configurations
+  const barChartData = {
+    labels: Object.keys(gpaBrackets),
+    datasets: [
+      {
+        label: 'Number of Students',
+        data: Object.values(gpaBrackets),
+        backgroundColor: theme === 'dark' ? 'rgba(56, 189, 248, 0.4)' : 'rgba(14, 165, 233, 0.75)',
+        borderColor: theme === 'dark' ? '#38bdf8' : '#0ea5e9',
+        borderWidth: 1.5,
+        borderRadius: 8,
+        barPercentage: 0.6,
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: theme === 'dark' ? '#0f172a' : '#ffffff',
+        titleColor: theme === 'dark' ? '#ffffff' : '#0f172a',
+        bodyColor: '#64748b',
+        borderColor: theme === 'dark' ? '#334155' : '#e2e8f0',
+        borderWidth: 1,
+        padding: 12,
+        boxPadding: 6,
+        usePointStyle: true,
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: '#94a3b8',
+          font: {
+            family: 'Inter',
+            size: 11
+          }
+        }
+      },
+      y: {
+        grid: {
+          color: theme === 'dark' ? 'rgba(51, 65, 85, 0.3)' : 'rgba(226, 232, 240, 0.8)',
+        },
+        ticks: {
+          color: '#94a3b8',
+          font: {
+            family: 'Inter',
+            size: 11
+          },
+          stepSize: 1
+        }
+      }
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Title & Introduction Section */}
@@ -162,14 +255,25 @@ export const Overview: React.FC = () => {
         })}
       </div>
       
-      {/* Charts Placeholder - to be filled in Commit 2 and 3 */}
+      {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md min-h-[300px] flex items-center justify-center">
-          <p className="text-sm text-slate-400">Loading Student performance analytics...</p>
+        
+        {/* Student Performance Bar Chart */}
+        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
+          <div className="mb-4">
+            <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">GPA Distribution</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Academic Performance of Active Students</p>
+          </div>
+          <div className="h-64 relative">
+            <Bar data={barChartData} options={chartOptions} />
+          </div>
         </div>
-        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md min-h-[300px] flex items-center justify-center">
+
+        {/* Weekly Attendance Line Chart (Placeholder for Step 3) */}
+        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex items-center justify-center min-h-[300px]">
           <p className="text-sm text-slate-400">Loading Weekly attendance reports...</p>
         </div>
+
       </div>
     </div>
   );
