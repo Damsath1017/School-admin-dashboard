@@ -4,9 +4,13 @@ import {
   Plus, 
   Edit2, 
   Trash2, 
-  SlidersHorizontal
+  SlidersHorizontal, 
+  User, 
+  Mail, 
+  Phone
 } from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
+import { Modal } from './Modal';
 import { Student } from '../types';
 
 export const StudentsList: React.FC = () => {
@@ -14,6 +18,8 @@ export const StudentsList: React.FC = () => {
     students, 
     searchQuery, 
     setSearchQuery, 
+    addStudent, 
+    updateStudent, 
     deleteStudent
   } = useDashboard();
 
@@ -21,6 +27,109 @@ export const StudentsList: React.FC = () => {
   const [gradeFilter, setGradeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [feeFilter, setFeeFilter] = useState('All');
+
+  // Modal Control States
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+
+  // Form Field States
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [grade, setGrade] = useState('10th Grade');
+  const [parentName, setParentName] = useState('');
+  const [parentContact, setParentContact] = useState('');
+  const [gpa, setGpa] = useState('3.5');
+  const [attendanceRate, setAttendanceRate] = useState('95.0');
+  const [feeStatus, setFeeStatus] = useState<'Paid' | 'Pending' | 'Overdue'>('Paid');
+  const [status, setStatus] = useState<'Active' | 'Suspended' | 'Inactive'>('Active');
+  
+  // Validation State
+  const [formError, setFormError] = useState('');
+
+  // Handle Edit Trigger
+  const handleEditClick = (student: Student) => {
+    setEditingStudent(student);
+    setName(student.name);
+    setEmail(student.email);
+    setGrade(student.grade);
+    setParentName(student.parentName);
+    setParentContact(student.parentContact);
+    setGpa(student.gpa.toString());
+    setAttendanceRate(student.attendanceRate.toString());
+    setFeeStatus(student.feeStatus);
+    setStatus(student.status);
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  // Handle Add New Trigger
+  const handleAddClick = () => {
+    setEditingStudent(null);
+    setName('');
+    setEmail('');
+    setGrade('10th Grade');
+    setParentName('');
+    setParentContact('');
+    setGpa('3.5');
+    setAttendanceRate('95.0');
+    setFeeStatus('Paid');
+    setStatus('Active');
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  // Form Submit Handler
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError('');
+
+    // Validations
+    if (!name.trim() || !email.trim() || !parentName.trim() || !parentContact.trim()) {
+      setFormError('Please fill in all required fields.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setFormError('Please enter a valid email address.');
+      return;
+    }
+
+    const gpaNum = parseFloat(gpa);
+    if (isNaN(gpaNum) || gpaNum < 0 || gpaNum > 4.0) {
+      setFormError('GPA must be a number between 0.0 and 4.0.');
+      return;
+    }
+
+    const attendanceNum = parseFloat(attendanceRate);
+    if (isNaN(attendanceNum) || attendanceNum < 0 || attendanceNum > 100) {
+      setFormError('Attendance rate must be a percentage between 0% and 100%.');
+      return;
+    }
+
+    const studentData = {
+      name,
+      email,
+      grade,
+      parentName,
+      parentContact,
+      gpa: gpaNum,
+      attendanceRate: attendanceNum,
+      feeStatus,
+      status
+    };
+
+    if (editingStudent) {
+      updateStudent({
+        ...studentData,
+        id: editingStudent.id
+      });
+    } else {
+      addStudent(studentData);
+    }
+
+    setIsModalOpen(false);
+  };
 
   // Filter students array based on queries
   const filteredStudents = students.filter((student) => {
@@ -68,7 +177,7 @@ export const StudentsList: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => alert('Add student form will be available in next step!')}
+          onClick={handleAddClick}
           className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl text-sm shadow-lg shadow-sky-500/10 transition-all cursor-pointer w-fit"
         >
           <Plus className="w-4 h-4" />
@@ -219,7 +328,7 @@ export const StudentsList: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => alert('Edit student form will be available in next step!')}
+                          onClick={() => handleEditClick(student)}
                           className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-950/20 hover:border-sky-200 dark:hover:border-sky-900/30 transition-all cursor-pointer"
                           title="Edit Profile"
                         >
@@ -248,6 +357,206 @@ export const StudentsList: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Register/Edit Student Modal */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        title={editingStudent ? `Edit Student: ${editingStudent.name}` : 'Register New Student'}
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          
+          {formError && (
+            <div className="p-3 text-xs text-rose-600 bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900/30">
+              {formError}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Name */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Full Name *
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                  <User className="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Alex Smith"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Email Address *
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. alex@gmail.com"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Grade select */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Grade level *
+              </label>
+              <select
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+              >
+                <option value="9th Grade">9th Grade</option>
+                <option value="10th Grade">10th Grade</option>
+                <option value="11th Grade">11th Grade</option>
+                <option value="12th Grade">12th Grade</option>
+              </select>
+            </div>
+
+            {/* GPA */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Overall GPA *
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0.0"
+                max="4.0"
+                value={gpa}
+                onChange={(e) => setGpa(e.target.value)}
+                placeholder="e.g. 3.8"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                required
+              />
+            </div>
+
+            {/* Parent Name */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Parent Name *
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                  <User className="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  value={parentName}
+                  onChange={(e) => setParentName(e.target.value)}
+                  placeholder="e.g. Gary Smith"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Parent Contact */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Parent Contact *
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                  <Phone className="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  value={parentContact}
+                  onChange={(e) => setParentContact(e.target.value)}
+                  placeholder="e.g. +1 (555) 123-4567"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Attendance Rate */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Attendance rate (%) *
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                value={attendanceRate}
+                onChange={(e) => setAttendanceRate(e.target.value)}
+                placeholder="e.g. 96.5"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+                required
+              />
+            </div>
+
+            {/* Fee Status select */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Fee Status *
+              </label>
+              <select
+                value={feeStatus}
+                onChange={(e) => setFeeStatus(e.target.value as any)}
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+              >
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Overdue">Overdue</option>
+              </select>
+            </div>
+
+            {/* Status select */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Status *
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as any)}
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+              >
+                <option value="Active">Active</option>
+                <option value="Suspended">Suspended</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800 pt-4 mt-6">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2.5 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl text-xs shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 transition-all cursor-pointer"
+            >
+              {editingStudent ? 'Save Changes' : 'Register Student'}
+            </button>
+          </div>
+
+        </form>
+      </Modal>
 
     </div>
   );
