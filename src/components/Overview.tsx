@@ -1,5 +1,17 @@
-import React from 'react';
-import { Users, GraduationCap, ClipboardCheck, DollarSign, TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  Users, 
+  GraduationCap, 
+  ClipboardCheck, 
+  DollarSign, 
+  TrendingUp, 
+  TrendingDown, 
+  ArrowUpRight,
+  Megaphone,
+  Send,
+  Clock,
+  AlertCircle
+} from 'lucide-react';
 import { useDashboard } from '../context/DashboardContext';
 
 // Chart.js imports
@@ -31,7 +43,12 @@ ChartJS.register(
 );
 
 export const Overview: React.FC = () => {
-  const { students, teachers, transactions, theme } = useDashboard();
+  const { students, teachers, transactions, activities, theme, triggerToast } = useDashboard();
+  
+  // Announcement states
+  const [announcementText, setAnnouncementText] = useState('');
+  const [targetAudience, setTargetAudience] = useState('All');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Dynamic Metrics calculations
   const totalStudents = students.length;
@@ -57,6 +74,21 @@ export const Overview: React.FC = () => {
       currency: 'USD',
       maximumFractionDigits: 0
     }).format(amount);
+  };
+
+  const handlePostAnnouncement = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!announcementText.trim()) {
+      triggerToast('Please write an announcement before publishing.', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      triggerToast(`Announcement published to "${targetAudience}" successfully!`, 'success');
+      setAnnouncementText('');
+      setIsSubmitting(false);
+    }, 800);
   };
 
   const statCards = [
@@ -237,6 +269,15 @@ export const Overview: React.FC = () => {
     }
   };
 
+  const getActivityColor = (type: string) => {
+    switch (type) {
+      case 'success': return 'bg-emerald-500 text-white';
+      case 'warning': return 'bg-amber-500 text-white';
+      case 'danger': return 'bg-rose-500 text-white';
+      default: return 'bg-sky-500 text-white';
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Title & Introduction Section */}
@@ -322,6 +363,92 @@ export const Overview: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Widgets Section (Activity logs & announcements) */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        
+        {/* Activity Logs - Takes 3 columns on wide grids */}
+        <div className="lg:col-span-3 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">Recent Activities</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Logs of administrative operations</p>
+            </div>
+            <Clock className="w-4 h-4 text-slate-400" />
+          </div>
+          
+          <div className="space-y-4 flex-1 overflow-y-auto pr-1 max-h-[320px]">
+            {activities.slice(0, 5).map((log) => (
+              <div key={log.id} className="flex gap-4 p-3.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40 border border-slate-100 dark:border-slate-800/60 transition-colors">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${getActivityColor(log.type)}`}>
+                  {log.user.slice(0, 2).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{log.user}</p>
+                    <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">{log.time}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{log.action}:</span> {log.target}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Announcement Composer - Takes 2 columns on wide grids */}
+        <div className="lg:col-span-2 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col">
+          <div className="mb-6 flex items-center gap-2">
+            <Megaphone className="w-5 h-5 text-sky-500" />
+            <div>
+              <h3 className="text-lg font-bold font-outfit text-slate-800 dark:text-white">Publish Announcement</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Broadcast school alerts instantly</p>
+            </div>
+          </div>
+
+          <form onSubmit={handlePostAnnouncement} className="space-y-4 flex-1 flex flex-col">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Target Audience
+              </label>
+              <select
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 transition-all"
+              >
+                <option value="All">All Audiences</option>
+                <option value="Students">Students Directory</option>
+                <option value="Teachers">Teachers Panel</option>
+                <option value="Staff">Administrative Staff</option>
+              </select>
+            </div>
+
+            <div className="flex-1 flex flex-col min-h-[120px]">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+                Announcement Message
+              </label>
+              <textarea
+                value={announcementText}
+                onChange={(e) => setAnnouncementText(e.target.value)}
+                placeholder="Type your announcement broadcast..."
+                className="w-full flex-1 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-sky-500 text-xs text-slate-800 dark:text-slate-200 resize-none transition-all placeholder:text-slate-400"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-semibold rounded-xl shadow-md shadow-sky-500/10 hover:shadow-sky-500/20 disabled:opacity-75 disabled:scale-100 transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-auto"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>{isSubmitting ? 'Publishing...' : 'Broadcast Announcement'}</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
     </div>
   );
 };
